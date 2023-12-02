@@ -43,7 +43,7 @@ function Table({ data }) {
     );
     setFilteredData(updatedFilteredData);
     setCurrentPage(1); // Reset current page when search changes
-  }, [pdata, searchInput]);
+  }, [data, searchInput]);
 
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = Math.min(startIndex + itemsPerPage, filteredData.length);
