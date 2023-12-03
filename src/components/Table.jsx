@@ -3,23 +3,8 @@ import React, { useState,useEffect } from "react";
 import { TiEdit } from "react-icons/ti";
 import { MdDeleteOutline } from "react-icons/md";
 import Pagination from "./Pagination";
-import { IoTrashBinOutline } from "react-icons/io5";
+import { IoSearch } from "react-icons/io5";
 
-const initialData = [
-  {
-    id: 1,
-    name: "John Doe",
-    email: "john@example.com",
-    role: "Admin",
-  },
-  {
-    id: 2,
-    name: "Jane Doe",
-    email: "jane@example.com",
-    role: "User",
-  },
-  // ... add more users as needed
-];
 
 function Table({ data }) {
   const itemsPerPage = 10;
@@ -28,7 +13,7 @@ function Table({ data }) {
   const [selectedItems, setSelectedItems] = useState([]);
   const [editableItems, setEditableItems] = useState({});
   const [filteredData, setFilteredData] = useState([]);
-  const [pdata, setPData] = useState(initialData);
+
 
   // Calculate the total number of pages
   const totalPages = Math.ceil(data.length / itemsPerPage);
@@ -43,7 +28,7 @@ function Table({ data }) {
     );
     setFilteredData(updatedFilteredData);
     setCurrentPage(1); // Reset current page when search changes
-  }, [data, searchInput]);
+  }, [data]);
 
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = Math.min(startIndex + itemsPerPage, filteredData.length);
@@ -119,7 +104,25 @@ function Table({ data }) {
       setSelectedItems([]);
     }
   };
-  
+  const handleSearchClick = () => {
+    const updatedFilteredData = data.filter((item) =>
+      Object.values(item).some(
+        (value) =>
+          typeof value === "string" &&
+          value.toLowerCase().includes(searchInput.toLowerCase())
+      )
+    );
+    setFilteredData(updatedFilteredData);
+    setCurrentPage(1); // Reset current page when search changes
+   
+  };
+
+  const handleSearchKeyPress = (e) => {
+    if (e.key === "Enter") {
+      handleSearchClick();
+    }
+  };
+
 
 
   return (
@@ -127,37 +130,28 @@ function Table({ data }) {
       <div className="relative overflow-x-auto shadow-md sm:rounded-lg mt-6">
         <div className="pb-4 bg-white dark:bg-gray-900 flex items-center justify-between">
           <div className="relative mt-1">
-            <div className="absolute inset-y-0 rtl:inset-r-0 start-0 flex items-center ps-3 pointer-events-none">
-              <svg
-                className="w-4 h-4 text-white"
-                aria-hidden="true"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 20 20"
-              >
-                <path
-                  stroke="currentColor"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
-                />
-              </svg>
+            <div className="absolute inset-y-0 rtl:inset-r-0 start-0 flex items-center ps-3 pointer-events-none ">
+           
+
             </div>
             <input
               type="text"
               id="table-search"
               value={searchInput}
+              onKeyPress={handleSearchKeyPress}
               onChange={(e) => setSearchInput(e.target.value)}
-              className="block pt-3 pb-2 ps-12 ml-[2rem] mt-[-4] text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              className="block pt-3 pb-2 ps-12 ml-[2rem] mt-[-4] text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 "
               placeholder="Search for items"
             />
+
+            
           </div>
-{/* if   if (selectedItems.length >= 10) then show cursor pointer else show block cursor show 
-  <div className="ml-auto text-3xl cursor-pointer" onClick={handleBulkDelete}>
-            <MdDeleteOutline color="red" />
-          </div>
-*/}
+          <div
+                className="w-4 h-4 text-white mr-[67rem] cursor-pointer text-xl cursor-pointer hover:text-blue-500"
+              >
+                <IoSearch onClick={handleSearchClick} />
+              </div>
+
           {
             selectedItems.length >= 10 ? (
               <div className="mr-[2rem] text-3xl cursor-pointer" onClick={handleBulkDelete}>
@@ -173,7 +167,7 @@ function Table({ data }) {
 
         
         </div>
-        <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+        <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 ">
           <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
             <tr>
               <th scope="col" className="p-4">
